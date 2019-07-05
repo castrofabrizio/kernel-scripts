@@ -1,12 +1,14 @@
 #!/bin/bash
-# This is to create the database with the symbols
+# This script helps with the checking of the dtbs files against the dt-bindings
 
 PROGRAM_DIRECTORY="$(cd "$(dirname "$0")"; pwd; )"
 source "${PROGRAM_DIRECTORY}/common.sh"
+source "${ENVIRONMENT_FILE}"
 
 ${PROGRAM_DIRECTORY}/compile-linux.sh \
+	-k \
 	-t ${ENVIRONMENT_FILE} \
-	-s \
 	-b "${BUILD_DIRECTORY}" \
+	-p \
+	-K "dtbs_check" \
 	| print_no_label
-check_exit_value ${PIPESTATUS[0]}

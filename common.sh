@@ -1,32 +1,44 @@
 #!/bin/bash
+# This file contains everything that's common between scripts, with the
+# exception of compile-linux.sh.
+# File utils.sh includes code shared by _every_ other script, including
+# compile-linux.sh and common.sh.
+
+PROGRAM_DIRECTORY="${PROGRAM_DIRECTORY:-$(dirname "$(realpath "${BASH_SOURCE[0]}")")}"
+PROGRAM_BASENAME="$(basename "$0")"
+if [ -z "${UTILS_LOADED}" ]; then
+	source "${PROGRAM_DIRECTORY}/utils.sh"
+fi
+if [ -n "${COMMON_LOADED}" ]; then
+	echo "common.sh already loaded" | print_debug
+	return
+fi
+echo "Loading common.sh" | print_debug
 
 ################################################################################
 # Global variables
-
-ENVIRONMENTS_DIRECTORY="${ENVIRONMENTS_DIRECTORY:-../environments}"
-PROGRAM_DIRECTORY="${PROGRAM_DIRECTORY:-$(dirname "$(realpath "${BASH_SOURCE[0]}")")}"
+ENVIRONMENTS_DIRECTORY="${ENVIRONMENTS_DIRECTORY:-${HOME}/environments}"
 BUILD_DIRECTORY="${BUILD_DIRECTORY:-${PWD}/build-${MACHINE}}"
 MODULES_FILENAME="modules.tar.gz"
 REQUIRED_VARIABLES=" \
 	MODULES_TARBALL_DEPLOY_DIRECTORY \
 	MODULES_INSTALL_DIRECTORIES \
-	KERNEL_DEPLOY_DIRECTORY \
-	DTB_DEPLOY_DIRECTORY \
+	KERNEL_DEPLOY_DIRECTORIES \
+	DTB_DEPLOY_DIRECTORIES \
 	DEVICE_TREE_FILES \
 	ENVIRONMENT_FILE \
 	BUILD_DIRECTORY \
 	KERNEL_IMAGE \
-	DEFCONFIG \
 "
 # We actually don't do anuthing with this, yet, it's just for reference
 OPTIONAL_VARIABLES=" \
 	PATCHES \
+	DEFCONFIG \
+	DEFCONFIG_FILE \
 "
 
 ################################################################################
 # Helpers
-
-source "${PROGRAM_DIRECTORY}/utils.sh"
 
 print_available_machines () {
 	echo "Available options are:"
@@ -80,3 +92,5 @@ for CURRENT_VARIABLE in ${REQUIRED_VARIABLES}; do
 		done
 	fi
 done
+
+COMMON_LOADED="yes"

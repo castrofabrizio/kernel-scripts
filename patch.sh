@@ -1,4 +1,6 @@
 #!/bin/bash
+# This script applies the desired patches to the current tree
+
 PROGRAM_DIRECTORY="$(cd "$(dirname "$0")"; pwd; )"
 source "${PROGRAM_DIRECTORY}/common.sh"
 
