@@ -6,6 +6,7 @@ if [ -z "${UTILS_LOADED}" ]; then
 	source "${PROGRAM_DIRECTORY}/utils.sh"
 fi
 export MACHINE=$1
+export BUILD_DIRECTORY="${BUILD_DIRECTORY:-${PWD}/build-${MACHINE}}"
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 	echo "Please, source me" | print_error
@@ -18,9 +19,6 @@ if ! ${PROGRAM_DIRECTORY}/common.sh; then
 	return 1
 fi
 set -e
-
-BUILD_DIRECTORY="${BUILD_DIRECTORY:-${PWD}/build-${MACHINE}}"
-export CSCOPE_DB="${CSCOPE_DB:-${BUILD_DIRECTORY}/cscope.out ${BUILD_DIRECTORY}}"
 
 . "${PROGRAM_DIRECTORY}/select-prompt.sh"
 echo "Machine \"${MACHINE}\" configured" | print_info

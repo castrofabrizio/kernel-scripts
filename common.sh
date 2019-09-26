@@ -18,7 +18,7 @@ echo "Loading common.sh" | print_debug
 ################################################################################
 # Global variables
 ENVIRONMENTS_DIRECTORY="${ENVIRONMENTS_DIRECTORY:-${HOME}/environments}"
-BUILD_DIRECTORY="${BUILD_DIRECTORY:-${PWD}/build-${MACHINE}}"
+# BUILD_DIRECTORY="${BUILD_DIRECTORY:-${PWD}/build-${MACHINE}}"
 MODULES_FILENAME="modules.tar.gz"
 REQUIRED_VARIABLES=" \
 	MODULES_TARBALL_DEPLOY_DIRECTORY \
