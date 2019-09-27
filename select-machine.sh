@@ -4,17 +4,19 @@
 # print the available machines
 
 PROGRAM_DIRECTORY="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
-if [ -z "${UTILS_LOADED}" ]; then
-	source "${PROGRAM_DIRECTORY}/utils.sh"
-fi
-export MACHINE="$1"
-
-# Let's take care of the build directory
+source "${PROGRAM_DIRECTORY}/helpers.sh"
+MACHINE="$1"
 DEFAULT_BUILD_DIRECTORY="${PWD}/build-${MACHINE}"
-if [ -z "${BUILD_DIRECTORY+x}" ]; then
-	BUILD_DIRECTORY="${DEFAULT_BUILD_DIRECTORY}"
-fi
-export BUILD_DIRECTORY
+
+get_build_directory () {
+	local TO_RETURN=""
+	if [ -z "${BUILD_DIRECTORY+x}" ]; then
+		TO_RETURN="${DEFAULT_BUILD_DIRECTORY}"
+	else
+		TO_RETURN="${BUILD_DIRECTORY}"
+	fi
+	echo "${TO_RETURN}"
+}
 
 # Have we been sourced?
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
@@ -22,13 +24,21 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 	exit 1
 fi
 
-set +e
-# Is the configuration correct?
-if ! ${PROGRAM_DIRECTORY}/common.sh; then
+(
+	export BUILD_DIRECTORY=$(get_build_directory)
+	export MACHINE
+	# Is the configuration correct?
+	if ! ${PROGRAM_DIRECTORY}/common.sh; then
+		exit 1
+	fi
+)
+if [ $? -ne 0 ]; then
 	unset MACHINE
 	return 1
 fi
-set -e
+
+export BUILD_DIRECTORY=$(get_build_directory)
+export MACHINE
 
 # Time to change the shell prompt
 . "${PROGRAM_DIRECTORY}/select-prompt.sh"
