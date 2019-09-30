@@ -4,6 +4,7 @@
 # print the available machines
 
 PROGRAM_DIRECTORY="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
+PROGRAM_BASENAME="select-machine.sh"
 source "${PROGRAM_DIRECTORY}/helpers.sh"
 MACHINE="$1"
 DEFAULT_BUILD_DIRECTORY="${PWD}/build-${MACHINE}"
