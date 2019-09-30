@@ -8,16 +8,15 @@ if [ -n "${DEFCONFIG_FILE}" -a -n "${DEFCONFIG}" ]; then
 	echo "Please, either unset DEFCONFIG or unset DEFCONFIG_FILE" | print_error
 	exit 1
 elif [ -n "${DEFCONFIG_FILE}" ]; then
-	DEFCONFIG_OPTION="-D ${DEFCONFIG_FILE}"
+	DEFCONFIG_OPTION="-D \"${DEFCONFIG_FILE}\""
 elif [ -n "${DEFCONFIG}" ]; then
-	DEFCONFIG_OPTION="-d ${DEFCONFIG}"
+	DEFCONFIG_OPTION="-d \"${DEFCONFIG}\""
 else
 	echo "Please, either define DEFCONFIG or define DEFCONFIG_FILE" | print_error
 	exit 1
 fi
 
-echo "Using \"${DEFCONFIG}\"" | print_info
-${PROGRAM_DIRECTORY}/compile-linux.sh \
+eval ${PROGRAM_DIRECTORY}/compile-linux.sh \
 	-t "${ENVIRONMENT_FILE}" \
 	-b "${BUILD_DIRECTORY}" \
 	   "${DEFCONFIG_OPTION}" \

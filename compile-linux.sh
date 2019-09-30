@@ -80,6 +80,7 @@ while getopts ":t:d:D:kK:sMm:i:b:B:vph" opt; do
 	D)
 		if [ ! -f "${OPTARG}" ]; then
 			echo "[-D] \"${OPTARG}\" No such file" | print_error
+			exit 1
 		fi
 		DEFCONFIG_FILE="$(realpath "${OPTARG}")"
 		;;
