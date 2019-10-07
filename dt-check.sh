@@ -12,3 +12,4 @@ ${PROGRAM_DIRECTORY}/compile-linux.sh \
 	-p \
 	-K "dtbs_check" \
 	| print_no_label
+check_exit_value ${PIPESTATUS[0]}
