@@ -1,0 +1,168 @@
+This repo contains helpful scripts to configure, build, and validate the Linux
+kernel.
+
+In order to use this scripts, you need to have a Linux host system configured
+to compile kernel code. On top of that, you need a few extra packages installed
+on your disctribution computer, for example on Ubuntu:
+sudo apt-get install exuberant-ctags cscope bison flex
+
+The below additional project(s) are required to fully utilize the scripts:
+git://git.kernel.org/pub/scm/devel/sparse/sparse.git
+
+Make sure this directory is in your PATH variable.
+
+Machine selection
+=================
+The first step in order to be able to use the scripts is "machine selection".
+In this context a machine is a string representing the configuration to use
+while running the scripts.
+Each machine has a corresponding environment file under:
+~/environments
+The filename of the environment file is:
+${MACHINE}-environment
+
+An example of content for directory ~/environment:
+$ ls ~/environments/
+alt-gcc-8.1.0-environment
+ek874-4.14-bsp-environment
+ek874-4.19-environment
+ek874-4.19-renesas_defconfig-environment
+ek874-environment
+hihope-rzg2m-4.19-environment
+hihope-rzg2m-environment
+hihope-rzg2n-environment
+iwg20d-environment
+iwg23s-environment
+iwg23s-upstream-environment
+
+The *-environment files have to be provided by you, the user.
+
+Script select-machine.sh allows you to select the machine you want to work with,
+selection probed dynamically from your ~/environments directory.
+Script select-machine.sh needs to be sourced and needs to be given a parameter,
+the machine (as in ${MACHINE}-environment) name. With no parameter it'll list
+the available machines, for example:
+
+$ source select-machine.sh
+[common.sh][ERROR] Please define variable MACHINE
+[common.sh][ERROR]
+[common.sh][ERROR] Available options are:
+[common.sh][ERROR] * alt-gcc-8.1.0
+[common.sh][ERROR] * ek874-4.14-bsp
+[common.sh][ERROR] * ek874-4.19
+[common.sh][ERROR] * ek874-4.19-renesas_defconfig
+[common.sh][ERROR] * ek874
+[common.sh][ERROR] * hihope-rzg2m-4.19
+[common.sh][ERROR] * hihope-rzg2m
+[common.sh][ERROR] * hihope-rzg2n
+[common.sh][ERROR] * iwg20d
+[common.sh][ERROR] * iwg23s
+[common.sh][ERROR] * iwg23s-upstream
+[common.sh][INFO] Cleaning temporary directory...
+[common.sh][INFO] Done
+[common.sh][2019-10-07 11:45:07] Execution time: 00:00:00
+
+When the parameters is provided, the terminal will remember your preference
+and the prompt will change:
+$ source select-machine.sh hihope-rzg2n
+[common.sh][INFO] Cleaning temporary directory...
+[common.sh][INFO] Done
+[common.sh][2019-10-07 11:48:49] Execution time: 00:00:00
+[select-machine.sh][INFO]
+[select-machine.sh][INFO] #################
+[select-machine.sh][INFO] # Configuration #
+[select-machine.sh][INFO] #################
+[select-machine.sh][INFO]
+[select-machine.sh][INFO] Machine: "hihope-rzg2n"
+[select-machine.sh][INFO] Selected build directory: "/home/fabrizio/renesas-cip/build-hihope-rzg2n"
+[select-machine.sh][INFO]
+fabrizio@hihope-rzg2n$
+
+Environment file
+================
+From the freshly configured terminal (wih select-machine.sh), you can now
+address the scripts found in this repo, and they'll work according to the
+settings found in ~/${MACHINE}-environment, for example:
+$ cat ~/${MACHINE}-environment && echo "######"
+ENVIRONMENT_FILE="${USER}/toolchains/weston-r8a7796-r8a774a1/environment"
+
+if [ -z "${MY_DEPLOY_DIRECTORY}" ]; then
+        MY_DEPLOY_DIRECTORY="/tftpboot/rzg2n/boot.in-progress/mine"
+fi
+
+MODULES_TARBALL_DEPLOY_DIRECTORY="${MY_DEPLOY_DIRECTORY}"
+KERNEL_DEPLOY_DIRECTORIES="${MY_DEPLOY_DIRECTORY}"
+DTB_DEPLOY_DIRECTORIES="${MY_DEPLOY_DIRECTORY}"
+
+MODULES_INSTALL_DIRECTORIES=" \
+        /tftpboot/RZ-G2N/ \
+"
+
+DEVICE_TREE_FILES=" \
+        ${DEVICE_TREE_FILES} \
+        renesas/r8a774b1-hihope-rzg2n.dtb \
+        renesas/r8a774b1-hihope-rzg2n-ex.dtb \
+        renesas/r8a774b1-hihope-rzg2n-ex_C.dtb \
+"
+
+if [ -z ${CONFIGURATION_FRAGMENTS+x} ]; then
+        CONFIGURATION_FRAGMENTS=" \
+                /data/testing/meta-cip-tests/recipes-kernel/linux/files/common.cfg \
+                /data/testing/meta-cip-tests/recipes-kernel/linux/files/missing_drivers.cfg \
+                /data/testing/meta-cip-tests/recipes-kernel/linux/files/aarch64/missing_architecture.cfg \
+                /data/testing/meta-cip-tests/recipes-kernel/linux/files/aarch64/missing_hihope-rzg2m.cfg \
+        "
+fi
+
+PATCHES=" \
+        /data/testing/meta-cip-tests/recipes-kernel/linux/files/aarch64/0001-Skip-arch_sys_counter.patch \
+"
+
+KERNEL_IMAGE="Image"
+if [ -z "${DEFCONFIG}" ]; then
+        DEFCONFIG="defconfig"
+fi
+######
+
+Some variables have to be defined in your environment file:
+* MODULES_TARBALL_DEPLOY_DIRECTORY - where to copy the tarball with the kernel
+  modules
+* MODULES_INSTALL_DIRECTORIES - where to install the kernel modules (from the
+  tarball), it can contain more than one directory
+* KERNEL_DEPLOY_DIRECTORIES - where to copy the kernel image once built, it can
+  contain more than one directory
+* DTB_DEPLOY_DIRECTORIES - where to copy the dtbs (and the corresponding reverse
+  engineered dts) once built
+* DEVICE_TREE_FILES - the list of dtbs to build
+* ENVIRONMENT_FILE - the filepath of the environment file to source to use the
+  (cross)-toolchain
+* BUILD_DIRECTORY - this variable gets automatically defined, but it may be
+  overriden from the command line or from the environment file
+* KERNEL_IMAGE - the kernel image to build
+* DEFCONFIG - the defconfig to use from the kernel source tree, in case you
+  want to use an out-of-tree file than specify the filepath of such a file with
+  variable DEFCONFIG_FILE
+
+Other variables are not mandatory:
+* PATCHES - a list of patches to be applied with the "patch" command
+
+Scripts usage
+=============
+The scripts you'll be using more often are:
+* clean.sh - deletes the build directory
+* configure.sh - configures the kernel according to DEFCONFIG or DEFCONFIG_FILE
+* kernel.sh - builds KERNEL_IMAGE and installs it in KERNEL_DEPLOY_DIRECTORIES
+* modules.sh - builds the kernel modules, creates modules.tar.gz, copies
+  modules.tar.gz to MODULES_TARBALL_DEPLOY_DIRECTORY then installs (extracts)
+  modules.tar.gz into MODULES_INSTALL_DIRECTORIES
+* dt.sh - builds DEVICE_TREE_FILES and copies them into DTB_DEPLOY_DIRECTORIES
+* symbols.sh - creates the databases for cscope and ctags
+* menuconfig.sh - runs make menuconfig
+* dt-binding-check.sh - runs make dt_binding_check
+* dt-check.sh - runs make dtbs_check
+* sparse-checks.sh - runs checks with sparse
+A complete documentation will be available with time.
+
+Further improvements
+====================
+TODO
