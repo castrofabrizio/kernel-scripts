@@ -32,8 +32,8 @@ if [ $# -gt 0 ]; then
 	check_exit_value ${PIPESTATUS[0]}
 
 	for CURRENT_INSTALL_DIRECTORY in ${MODULES_INSTALL_DIRECTORIES}; do
-		sudo rm -rf ${CURRENT_INSTALL_DIRECTORY}/$(${PROGRAM_DIRECTORY}/kernelrelease.sh)
-		sudo -E ${PROGRAM_DIRECTORY}/compile-linux.sh \
+		rm -rf ${CURRENT_INSTALL_DIRECTORY}/$(${PROGRAM_DIRECTORY}/kernelrelease.sh)
+		${PROGRAM_DIRECTORY}/compile-linux.sh \
 			-t ${ENVIRONMENT_FILE} \
 			-b "${BUILD_DIRECTORY}" \
 			-i ${CURRENT_INSTALL_DIRECTORY} \
