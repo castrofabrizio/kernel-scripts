@@ -29,7 +29,7 @@ for CURRENT_DEVICE_TREE_BINARY in ${DEVICE_TREE_FILES}; do
 		-k \
 		-t ${ENVIRONMENT_FILE} \
 		-b "${BUILD_DIRECTORY}" \
-		-K "${CURRENT_DEVICE_TREE_BINARY} W=1" \
+		-K "${CURRENT_DEVICE_TREE_BINARY} W=1" | \
 		print_no_label
 	check_exit_value ${PIPESTATUS[0]}
 
