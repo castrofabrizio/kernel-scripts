@@ -21,7 +21,7 @@ for CURRENT_DEVICE_TREE_BINARY in ${DEVICE_TREE_FILES}; do
 		continue
 	fi
 	if [ ! -f "arch/${ARCH}/boot/dts/${CURRENT_DEVICE_TREE_SOURCE}" ]; then
-		echo "\"${CURRENT_DEVICE_TREE_BINARY}\" No such file. Skipping." | print_warning
+		echo "\"arch/${ARCH}/boot/dts/${CURRENT_DEVICE_TREE_SOURCE}\" No such file. Skipping." | print_warning
 		continue
 	fi
 	echo "Compiling \"${CURRENT_DEVICE_TREE_BINARY}\"" | print_info
