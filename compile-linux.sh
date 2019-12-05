@@ -11,6 +11,8 @@ COMMAND_NAME="$0"
 BUILD_DIRECTORY=""
 UNSET_PYTHON="no"
 EXIT_VALUE=0
+DEFCONFIG_FILE=""
+DEFCONFIG=""
 
 ################################################################################
 # Helpers
@@ -171,12 +173,12 @@ if [ -n "${PRINT_VERSION}" ]; then
 fi
 
 if [ -n "${DEFCONFIG}" ]; then
-	echo "Configuring the kernel" | print_info
+	echo "Configuring the kernel with \"${DEFCONFIG}\"" | print_info
 	run_make ${DEFCONFIG}
 fi
 
 if [ -n "${DEFCONFIG_FILE}" ]; then
-	echo "Configuring the kernel" | print_info
+	echo "Configuring the kernel with file \"${DEFCONFIG_FILE}\"" | print_info
 	if [ -n "${BUILD_DIRECTORY}" ]; then
 		mkdir -p "${BUILD_DIRECTORY}"
 		cp "${DEFCONFIG_FILE}" "${BUILD_DIRECTORY}/.config"
