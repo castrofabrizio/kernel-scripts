@@ -11,3 +11,6 @@ if [ ${PIPESTATUS[0]} -ne 0 ]; then
 	exit 1
 fi
 echo "Deleting \"${BUILD_DIRECTORY}\"...done" | print_info
+echo -n "Deleting kernel/config_data.h..." | print_info
+rm -f kernel/config_data.h
+echo "done"
