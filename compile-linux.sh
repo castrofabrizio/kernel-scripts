@@ -54,12 +54,12 @@ print_help () {
 	 -s             Update cscope and tags
 	 -M             Run menuconfig
 	 -m <file>      Compile the modules and generate a tarball.
-	 -i <dir>	Install modules into the specified directory
+	 -i <dir>       Install modules into the specified directory
 	 -b <dir>       Build directory filepath.
 	 -B <file>      Build the specified in-tree kernel module. This
 	                option can be repeated multiple times
 	 -v             Get kernel version
-	 -p		Unset python specific environment variables
+	 -p             Unset python specific environment variables
 
 	EOF
 }
