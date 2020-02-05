@@ -5,8 +5,8 @@
 
 PROGRAM_DIRECTORY="$(cd "$(dirname "$0")"; pwd; )"
 PROGRAM_BASENAME="$(basename "$0")"
-NUMBER_OF_CORES=$(grep -c ^proc /proc/cpuinfo)
-PARALLELISM_FACTOR=$((NUMBER_OF_CORES * 2))
+NUMBER_OF_CORES=$(nproc)
+PARALLELISM_FACTOR=$((NUMBER_OF_CORES * 1))
 COMMAND_NAME="$0"
 BUILD_DIRECTORY=""
 UNSET_PYTHON="no"
