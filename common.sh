@@ -35,6 +35,7 @@ OPTIONAL_VARIABLES=" \
 	DEFCONFIG_FILE \
 	DTB_DEPLOY_DIRECTORIES \
 	DEVICE_TREE_FILES \
+	CONFIGURATION_FRAGMENTS \
 "
 
 ################################################################################
