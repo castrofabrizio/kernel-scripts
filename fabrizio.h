@@ -1,6 +1,8 @@
 #ifndef __FABRIZIO_H__
 #define __FABRIZIO_H__
 
+#include <linux/regmap.h>
+
 //#define ENABLE_FABRIZIO_DEBUG
 //#define DISABLE_FABRIZIO_DEBUG
 
@@ -94,5 +96,59 @@
 							fabrizio_debug("vrefresh = %d", (m)->vrefresh); \
 							fabrizio_debug("hsync = %d", (m)->hsync); \
 							fabrizio_debug("picture_aspect_ratio = %d", (m)->picture_aspect_ratio);
+
+#define fabrizio_regmap_read(map, reg, val) \
+({ \
+	int ret; \
+	ret = regmap_read(map, reg, val); \
+	fabrizio_debug("[fabrizio_regmap_read] reg = 0x%x, val = 0x%x, ret = %d", reg, *(val), ret); \
+	ret; \
+})
+
+#define fabrizio_regmap_write(map, reg, val) \
+({ \
+	int ret; \
+	ret = regmap_write(map, reg, val); \
+	fabrizio_debug("[fabrizio_regmap_write] reg = 0x%x, val = 0x%x, ret = %d", reg, val, ret); \
+	ret; \
+})
+
+#define fabrizio_regmap_read_poll_timeout(map, addr, val, cond, sleep_us, timeout_us) \
+({ \
+	int ret; \
+	ret = regmap_read_poll_timeout(map, addr, val, cond, sleep_us, timeout_us); \
+	fabrizio_debug("[fabrizio_regmap_read_poll_timeout] addr = 0x%x, val = 0x%x, ret = %d", addr, val, ret); \
+	ret; \
+})
+
+#define fabrizio_regmap_update_bits(map, reg, mask, val) \
+({ \
+	int ret; \
+	ret = regmap_update_bits(map, reg, mask, val); \
+	fabrizio_debug("[fabrizio_regmap_update_bits] reg = 0x%x, mask = 0x%x, val = 0x%x, ret = %d", reg, mask, val, ret); \
+	ret; \
+})
+
+#define fabrizio_regmap_bulk_read(map, reg, val, val_count) \
+({ \
+	int ret; \
+	ret = regmap_bulk_read(map, reg, val, val_count); \
+	fabrizio_debug("[fabrizio_regmap_bulk_read] reg = 0x%x, ret = %d", reg, ret); \
+	ret; \
+})
+
+#define fabrizio_mutex_lock(m) \
+({ \
+	fabrizio_debug("before mutex_lock"); \
+	mutex_lock(m); \
+	fabrizio_debug("after  mutex_lock"); \
+})
+
+#define fabrizio_mutex_unlock(m) \
+({ \
+	fabrizio_debug("before mutex_unlock"); \
+	mutex_unlock(m); \
+	fabrizio_debug("after  mutex_unlock"); \
+})
 
 #endif /* __FABRIZIO_H__ */
