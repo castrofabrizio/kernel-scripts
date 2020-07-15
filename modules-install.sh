@@ -8,6 +8,7 @@ for CURRENT_DIRECTORY in ${MODULES_INSTALL_DIRECTORIES}; do
 	echo "Installing modules within directory \"${CURRENT_DIRECTORY}\"..." | print_info
 	tar \
 		-xf "${MODULES_TARBALL_DEPLOY_DIRECTORY}/${MODULES_FILENAME}" \
-		-C ${CURRENT_DIRECTORY}
+		-C "${CURRENT_DIRECTORY}"
+	chmod 755 "${CURRENT_DIRECTORY}"
 	echo "done" | print_info
 done
