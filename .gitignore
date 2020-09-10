@@ -1,1 +1,3 @@
 *.swp
+get_recipients.sh
+get_recipients-*.sh
