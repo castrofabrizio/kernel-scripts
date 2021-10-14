@@ -36,6 +36,7 @@ OPTIONAL_VARIABLES=" \
 	DTB_DEPLOY_DIRECTORIES \
 	DEVICE_TREE_FILES \
 	CONFIGURATION_FRAGMENTS \
+	MENUCONFIG_ENVIRONMENT_FILE \
 "
 
 ################################################################################
@@ -93,5 +94,9 @@ for CURRENT_VARIABLE in ${REQUIRED_VARIABLES}; do
 		done
 	fi
 done
+
+if [ -z "${MENUCONFIG_ENVIRONMENT_FILE}" ]; then
+	MENUCONFIG_ENVIRONMENT_FILE="${ENVIRONMENT_FILE}"
+fi
 
 COMMON_LOADED="yes"
