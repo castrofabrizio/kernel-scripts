@@ -27,5 +27,8 @@ for CURRENT_FRAGMENT in ${CONFIGURATION_FRAGMENTS}; do
 	cat ${CURRENT_FRAGMENT} >> "${BUILD_DIRECTORY}/.config"
 	echo "Added \"${CURRENT_FRAGMENT}\" to configuration" | print_info
 done
+
+echo "CONFIG_LOCALVERSION_AUTO=n" >> "${BUILD_DIRECTORY}/.config"
+
 ${PROGRAM_DIRECTORY}/oldconfig.sh | print_no_label
 check_exit_value ${PIPESTATUS[0]}
