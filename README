@@ -142,6 +142,8 @@ Some variables have to be defined in your environment file:
 * DEFCONFIG - the defconfig to use from the kernel source tree, in case you
   want to use an out-of-tree file than specify the filepath of such a file with
   variable DEFCONFIG_FILE
+* CONFIG_LOCALVERSION - Inject the desired localversion into the kernel while
+  configuring it
 
 Other variables are not mandatory:
 * PATCHES - a list of patches to be applied with the "patch" command

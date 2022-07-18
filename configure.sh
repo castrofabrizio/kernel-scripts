@@ -28,6 +28,9 @@ for CURRENT_FRAGMENT in ${CONFIGURATION_FRAGMENTS}; do
 	echo "Added \"${CURRENT_FRAGMENT}\" to configuration" | print_info
 done
 
+if [ -n "${CONFIG_LOCALVERSION}" ]; then
+	echo "CONFIG_LOCALVERSION=\"${CONFIG_LOCALVERSION}\"" >> "${BUILD_DIRECTORY}/.config"
+fi
 echo "CONFIG_LOCALVERSION_AUTO=n" >> "${BUILD_DIRECTORY}/.config"
 
 ${PROGRAM_DIRECTORY}/oldconfig.sh | print_no_label
