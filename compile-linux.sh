@@ -219,7 +219,7 @@ if [ -n "${MODULES_TARBALL}" ]; then
 	echo "Done" | print_info
 
 	echo "Creating modules tarball \"${MODULES_TARBALL}\"..." | print_info
-	tar -pczf "${MODULES_TARBALL}" -C "${MODULES_DIRECTORY}" .
+	tar --owner=root --group=root -pczf "${MODULES_TARBALL}" -C "${MODULES_DIRECTORY}" .
 	echo "Done" | print_info
 fi
 
