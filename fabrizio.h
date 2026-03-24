@@ -3,6 +3,29 @@
 
 #include <linux/regmap.h>
 
+#define fabrizio_debug_print(format, ...)		printk("[FAB][%s(%d:%s)] " format "\n", \
+								__func__, \
+								__LINE__, \
+								__FILE__, \
+								##__VA_ARGS__)
+#define fabrizio_debug_print_caller(format, ...)	printk("[FAB][%pS->%s(%d:%s)] " format "\n", \
+								__builtin_return_address(0), \
+								__func__, \
+								__LINE__, \
+								__FILE__, \
+								##__VA_ARGS__)
+#define fabrizio_debug_print_calling(pointer)		printk("[FAB][%s(%d:%s)]->%pF\n", \
+								__func__, \
+								__LINE__, \
+								__FILE__, \
+								(pointer))
+#define fabrizio_debug_print_register(reg,value)	fabrizio_debug_print( \
+								"[0x%08llx] = 0x%08llx", \
+								(long long unsigned)(reg), \
+								(long long unsigned)(value) \
+							);
+#define fabrizio_debug_print_dump_stack()		fabrizio_debug_print("Dumping stack"); dump_stack()
+
 //#define ENABLE_FABRIZIO_DEBUG
 //#define DISABLE_FABRIZIO_DEBUG
 
@@ -18,47 +41,18 @@
 # endif
 #endif
 
-#define FABRIZIO_LINE
-
 #ifdef  FABRIZIO_DEBUG
-#  define fabrizio_dump_stack()				dump_stack()
-#  ifdef FABRIZIO_LINE
-#    define fabrizio_debug(format, ...)			printk("[FAB][%s(%d:%s)] " format "\n", \
-								__func__, \
-								__LINE__, \
-								__FILE__, \
-								##__VA_ARGS__)
-#    define fabrizio_debug_caller(format, ...)		printk("[FAB][%pS->%s(%d:%s)] " format "\n", \
-								__builtin_return_address(0), \
-								__func__, \
-								__LINE__, \
-								__FILE__, \
-								##__VA_ARGS__)
-#    define fabrizio_debug_calling(pointer)		printk("[FAB][%s(%d:%s)]->%pF\n", \
-								__func__, \
-								__LINE__, \
-								__FILE__, \
-								pointer)
-#  else
-#    define fabrizio_debug(format, ...)			printk("[FAB][%s(%s)] " format "\n", \
-								__func__, \
-								__FILE__, \
-								##__VA_ARGS__)
-#    define fabrizio_debug_caller(format, ...)		printk("[FAB][%pS->%s(%s)] " format "\n", \
-								__builtin_return_address(0), \
-								__func__, \
-								__FILE__, \
-								##__VA_ARGS__)
-#    define fabrizio_debug_calling(pointer)		printk("[FAB][%s(%s)]->%pF\n", \
-								__func__, \
-								__FILE__, \
-								pointer)
-#  endif /* FABRIZIO_LINE */
+#  define fabrizio_debug_dump_stack()			fabrizio_debug_print_dump_stack()
+#  define fabrizio_debug(format, ...)			fabrizio_debug_print(format,##__VA_ARGS__)
+#  define fabrizio_debug_caller(format, ...)		fabrizio_debug_print_caller(format,##__VA_ARGS__)
+#  define fabrizio_debug_calling(pointer)		fabrizio_debug_print_calling(pointer)
+#  define fabrizio_debug_register(reg,value)		fabrizio_debug_print_register(reg,value)
 #else /* FABRIZIO_DEBUG */
+#  define fabrizio_debug_dump_stack()
 #  define fabrizio_debug(format, ...)
 #  define fabrizio_debug_caller(format, ...)
 #  define fabrizio_debug_calling(pointer)
-#  define fabrizio_dump_stack()
+#  define fabrizio_debug_register(reg,value)
 #endif /* FABRIZIO_DEBUG */
 
 #define fabrizio_debug_drm_display_mode(m)		if ((m)->name) fabrizio_debug("name = %s", (m)->name); \

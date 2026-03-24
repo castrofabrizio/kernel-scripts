@@ -26,5 +26,5 @@ echo "Done" | print_info
 while read CURRENT_FILE; do
 	echo "Creating symbolic link for file ${CURRENT_FILE}" | print_info
 	ln -sf "${CURRENT_FILE}" "$(basename "${CURRENT_FILE}")"
-done < <(find "${DIRECTORY}" -maxdepth 1 -type f)
+done < <(find "${DIRECTORY}" -maxdepth 1 -type l,f)
 echo "Done" | print_info

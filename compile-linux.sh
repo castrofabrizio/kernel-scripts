@@ -224,7 +224,10 @@ if [ -n "${MODULES_TARBALL}" ]; then
 fi
 
 if [ -n "${MODULES_INSTALL_DIRECTORY}" ]; then
-	echo "Installing modules..." | print_info
+	if [ ! -f "${BUILD_DIRECTORY}/modules.order" ]; then
+		touch "${BUILD_DIRECTORY}/modules.order"
+	fi
+	echo "Installing modules under ${MODULES_INSTALL_DIRECTORY}..." | print_info
 	run_make "INSTALL_MOD_PATH=\"${MODULES_INSTALL_DIRECTORY}\" modules_install"
 	echo "Done" | print_info
 fi

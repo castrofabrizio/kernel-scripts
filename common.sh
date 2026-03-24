@@ -43,9 +43,66 @@ OPTIONAL_VARIABLES=" \
 # Helpers
 
 print_available_machines () {
+	local CURRENT_ENVIRONMENT=""
 	echo "Available options are:"
 	for CURRENT_ENVIRONMENT in $(ls "${ENVIRONMENTS_DIRECTORY}/"*-environment); do
 		echo "* $(basename "${CURRENT_ENVIRONMENT}" | awk -F"-environment" '{print $1}')"
+	done
+}
+
+get_extended_device_tree_list () {
+	local CURRENT_DEVICE_TREE=""
+	local CURRENT_DEVICE_TREE_DST=""
+
+	local EXTENDED_DEVICE_TREE_LIST="${DEVICE_TREE_FILES}"
+
+	for CURRENT_DEVICE_TREE in ${COPY_DEVICE_TREE_FILES}; do
+		CURRENT_DEVICE_TREE_DST="$(echo "${CURRENT_DEVICE_TREE}" | awk -F"=" '{print $1}')"
+		EXTENDED_DEVICE_TREE_LIST="${EXTENDED_DEVICE_TREE_LIST} ${CURRENT_DEVICE_TREE_DST}"
+	done
+
+	echo "${EXTENDED_DEVICE_TREE_LIST}"
+}
+
+copy_device_trees () {
+	local CURRENT_DEVICE_TREE=""
+
+	local CURRENT_DEVICE_TREE_SRC=""
+	local CURRENT_DEVICE_TREE_SRC_DTS=""
+	local CURRENT_DEVICE_TREE_SRC_FILENAME=""
+
+	local CURRENT_DEVICE_TREE_DST=""
+	local CURRENT_DEVICE_TREE_DST_DTS=""
+	local CURRENT_DEVICE_TREE_DST_FILENAME=""
+
+	for CURRENT_DEVICE_TREE in ${COPY_DEVICE_TREE_FILES}; do
+		CURRENT_DEVICE_TREE_DST="$(echo "${CURRENT_DEVICE_TREE}" | awk -F"=" '{print $1}')"
+		CURRENT_DEVICE_TREE_SRC="$(echo "${CURRENT_DEVICE_TREE}" | awk -F"=" '{print $2}')"
+
+		if [ -f "${BUILD_DIRECTORY}/arch/${ARCH}/boot/dts/${CURRENT_DEVICE_TREE_SRC}" ]; then
+			echo "Copying ${CURRENT_DEVICE_TREE_SRC} to ${CURRENT_DEVICE_TREE_DST}"
+			cp \
+				"${BUILD_DIRECTORY}/arch/${ARCH}/boot/dts/${CURRENT_DEVICE_TREE_SRC}" \
+				"${BUILD_DIRECTORY}/arch/${ARCH}/boot/dts/${CURRENT_DEVICE_TREE_DST}"
+		else
+			echo "File ${CURRENT_DEVICE_TREE_SRC} not found!" | print_warning
+			continue
+		fi
+
+
+		CURRENT_DEVICE_TREE_SRC_FILENAME="${CURRENT_DEVICE_TREE_SRC%.*}"
+		CURRENT_DEVICE_TREE_SRC_DTS="${CURRENT_DEVICE_TREE_SRC_FILENAME}.dts"
+		CURRENT_DEVICE_TREE_DST_FILENAME="${CURRENT_DEVICE_TREE_DST%.*}"
+		CURRENT_DEVICE_TREE_DST_DTS="${CURRENT_DEVICE_TREE_DST_FILENAME}.dts"
+
+		if [ -f "${BUILD_DIRECTORY}/arch/${ARCH}/boot/dts/${CURRENT_DEVICE_TREE_SRC_DTS}" ]; then
+			echo "Copying ${CURRENT_DEVICE_TREE_SRC_DTS} to ${CURRENT_DEVICE_TREE_DST_DTS}"
+			cp \
+				"${BUILD_DIRECTORY}/arch/${ARCH}/boot/dts/${CURRENT_DEVICE_TREE_SRC_DTS}" \
+				"${BUILD_DIRECTORY}/arch/${ARCH}/boot/dts/${CURRENT_DEVICE_TREE_DST_DTS}"
+		else
+			echo "File ${CURRENT_DEVICE_TREE_SRC_DTS} not found!" | print_warning
+		fi
 	done
 }
 
